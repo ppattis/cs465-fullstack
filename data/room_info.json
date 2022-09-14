@@ -1,0 +1,36 @@
+[
+
+  {
+
+    "name": "First Class",
+    "link_one": "rooms/",
+    "link_two": "rooms/",
+    "image": "first-class.jpg",
+    "image_alt": "Alt",
+    "rate": "220",
+    "description": "<p>Cras dui sapien, feugiat vitae tristique ut, lobortis tempor orci. Donec pulvinar sagittis metus ut tristique. Pellentes que habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas idios.</p>"
+  },
+  {
+
+    "name": "Deluxe",
+    "link_one": "rooms/",
+    "link_two": "rooms/",
+    "image": "deluxe.jpg",
+    "image_alt": "Alt",
+    "rate": "150",
+    "description": "<p>Sed et augue lorem. In sit amet placerat arcu. Mauris volutpat ipsum ac justo mollis vel vestibulum orci gravida. Vestibulum sit amet porttitor odio. Nulla facilisi. Fusce at pretium felis.</p>"
+
+  },
+  {
+
+    "name": "Suite",
+    "link_one": "rooms/",
+    "link_two": "rooms/",
+    "image_alt": "Alt",
+    "image": "suite.jpg",
+    "rate": "150",
+    "description": "<p>Sed et augue lorem. In sit amet placerat arcu. Mauris volutpat ipsum ac justo mollis vel vestibulum orci gravida. Vestibulum sit amet porttitor odio. Nulla facilisi. Fusce at pretium felis.</p>"
+
+  }
+
+]
