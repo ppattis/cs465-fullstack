@@ -1,30 +1,24 @@
 const mongoose = require('mongoose');
 const host = process.env.DB_HOST || '127.0.0.1';
-const dbURI = 'mongodb://${host}/travlr';
+const dbURI = `mongodb://${host}/travlr`;
 const readLine = require('readline');
 
 //  avoid 'current Server Discovery and Monitoring engine is deprecated'
-//mongoose.set('useUnifiedTopology', true);
+mongoose.set('useUnifiedTopology', true);
 
-const connect = () =>
+const connect = () => 
 {
+  
+  setTimeout(() => 
+      mongoose.connect(dbURI, 
+      {
 
-  setTimeout(() => mongoose.connect(dbURI, 
-  {
+        useNewUrlParser: true,
+        useCreateIndex: true,
 
-    useNewUrlParser: true,
-    useCreateIndex: true
+      }), 1000);
 
-  }), 1000);
-
-}
-
-if (process.env.NODE_ENV === 'production') 
-{
-
-  dbURI = process.env.MONGODB_URI;
-
-}
+};
 
 mongoose.connection.on('connected', () => 
 {
@@ -46,6 +40,25 @@ mongoose.connection.on('disconnected', () =>
   console.log('Mongoose disconnected');
 
 });
+
+if (process.platform == 'win32') 
+{
+
+  const r1 = readLine.createInterface(
+  {
+
+    input: process.stdin,
+    output: process.stdout
+
+  });
+  r1.on('SIGINT', () =>
+  {
+
+    process.emit('SIGINT');
+
+  });
+
+};
 
 const gracefulShutdown = (msg, callback) => 
 {
@@ -96,4 +109,6 @@ process.on('SIGTERM', () =>
 
 });
 
-require('./travlr');
+connect();
+
+require('./models/travlr');
