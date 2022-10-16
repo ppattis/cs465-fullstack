@@ -1,6 +1,7 @@
 const { model } = require('mongoose');
 const mongoose = require('mongoose');
 const Model = mongoose.model('trips');
+const user = mongoose.model('users');
 
 //  GET: /trips - list all the trips
 const tripsList = async (req, res) =>
@@ -77,99 +78,145 @@ const tripsFindCode = async (req, res) =>
 const tripsAddTrip = async (req, res) =>
 {
 
-  Model
-    .create({
-      code: req.body.code,
-      name: req.body.name,
-      length: req.body.length,
-      start: req.body.start,
-      resort: req.body.resort,
-      perPerson: req.body.perPerson,
-      image: req.body.image,
-      description: req.body.description
-    },
-    (err, trip) => 
-    {
+  getUser(req, res, (req, res) =>
+  {
 
-      if (err) 
+    Model
+      .create({
+        code: req.body.code,
+        name: req.body.name,
+        length: req.body.length,
+        start: req.body.start,
+        resort: req.body.resort,
+        perPerson: req.body.perPerson,
+        image: req.body.image,
+        description: req.body.description
+      },
+      (err, trip) => 
       {
 
-        return res
-          .status(400) //  bad request, invalid content
-          .json(err);
+        if (err) 
+        {
 
-      } else 
-      {
+          return res
+            .status(400) //  bad request, invalid content
+            .json(err);
 
-        return res
-          .status(201)  //  created
-          .json(trip);
+        } else 
+        {
 
-      }
+          return res
+            .status(201)  //  created
+            .json(trip);
 
-    });
+        }
+
+      });
+
+  });
 
 }
 
 const tripsUpdateTrip = async (req, res) =>
 {
 
-  console.log(req.body);
-  Model
-    .findOneAndUpdate({'code': req.params.tripCode},
-    {
+  getUser(req, res, (req, res) =>
+  {
 
-      code: req.body.code,
-      name: req.body.name,
-      length: req.body.length,
-      start: req.body.start,
-      resort: req.body.resort,
-      perPerson: req.body.perPerson,
-      image: req.body.image,
-      description: req.body.description
-
-    }, {new: true})
-    .then(trip =>
-    {
-
-      if (!trip)
+    console.log(req.body);
+    Model
+      .findOneAndUpdate({'code': req.params.tripCode},
       {
 
-        return res
-          .status(404)
-          .send(
-          {
+        code: req.body.code,
+        name: req.body.name,
+        length: req.body.length,
+        start: req.body.start,
+        resort: req.body.resort,
+        perPerson: req.body.perPerson,
+        image: req.body.image,
+        description: req.body.description
 
-            message: "Trip not found with code " + req.params.tripCode
-            
-          });
-
-      }
-      res.send(trip);
-
-    })
-    .catch(err =>
-    {
-
-      if (err.kind === 'ObjectId')
+      }, {new: true})
+      .then(trip =>
       {
+
+        if (!trip)
+        {
+
+          return res
+            .status(404)
+            .send(
+            {
+
+              message: "Trip not found with code " + req.params.tripCode
+
+            });
+
+        }
+        res.send(trip);
+
+      })
+      .catch(err =>
+      {
+
+        if (err.kind === 'ObjectId')
+        {
+          return res
+            .status(404)
+            .send(
+            {
+
+              message: "Trip not found with code " + req.params.tripCode
+
+            });
+
+        }
         return res
-          .status(404)
-          .send(
-          {
+          .status(500)
+          .json(err);
 
-            message: "Trip not found with code " + req.params.tripCode
-
-          });
-
-      }
-      return res
-        .status(500)
-        .json(err);
-
-    });
-
+      });
+  });
 }
+
+const getUser = (req, res, callback) =>
+{
+  console.log('req: ' + req.payload);
+  if (req.payload && req.payload.email)
+  {
+    
+    user
+      .findOne({ email: req.payload.email })
+      .exec((err, user) =>
+      {
+
+        if (!user)
+        {
+
+          return res.status(404).json({ message: "User not found" });
+
+        }
+        else if (err)
+        {
+
+          console.log(err);
+          return res.status(404).json(err);
+
+        }
+        callback(req, res, user.name);
+
+      });
+      
+  }
+  else 
+  {
+
+    return res.status(404).json({ message: "User not found" });
+
+  }
+
+};
 
 module.exports =
 {
